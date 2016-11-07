@@ -1,0 +1,20 @@
+data   segment 
+       org 100H
+buf   db 3 dup(00h) 
+count  equ $-buf1
+data   ends
+code   segment
+       assume cs:code,ds:data1
+start: mov ax,data
+       mov ds,ax
+       mov si,offset buf
+       mov cx,count
+       xor al,al
+next:  mov [si],al 
+       inc al
+       inc si
+       loop next
+       mov ah,4ch
+       int 21h
+code   ends
+       end start
