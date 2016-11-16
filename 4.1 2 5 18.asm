@@ -20,9 +20,9 @@ next:  mov [si],al
 code   ends
        end start
 
-PPTÀıÌâ
+PPTä¾‹é¢˜
 data segment
-one db 20 dup(32),1,'Welcome you!'£¬7,13,10
+one db 20 dup(32),1,'Welcome you!'ï¼Œ7,13,10
 count equ $-one
 data ends
 stack segment stack'stack'
@@ -66,11 +66,11 @@ next:  mov [si],al
        loop next
 next2: mov cx,count
        mov si,offset buf
-       xor bx,bx;blºÍbh·Ö±ğ´æ·ÅÕı¡¢¸ºÊıµÄ¸öÊı
-       xor dh,dh;dh¼Ä´æÆ÷´æ·Å0ÔªËØµÄ¸öÊı
+       xor bx,bx;blå’Œbhåˆ†åˆ«å­˜æ”¾æ­£ã€è´Ÿæ•°çš„ä¸ªæ•°
+       xor dh,dh;dhå¯„å­˜å™¨å­˜æ”¾0å…ƒç´ çš„ä¸ªæ•°
 next3: mov al,[si]
-       cmp al,0 ;alµÄÖµÓë0±È½Ï£¬ÈôÏàµÈ£¬zf=1 
-       jz zero  ;Èôzf=1,Ôò£¬al=0,ÌøÖÁzero,dh+1
+       cmp al,0 ;alçš„å€¼ä¸0æ¯”è¾ƒï¼Œè‹¥ç›¸ç­‰ï¼Œzf=1 
+       jz zero  ;è‹¥zf=1,åˆ™ï¼Œal=0,è·³è‡³zero,dh+1
        js negat
        jmp plus 
 zero:  inc dh
@@ -82,9 +82,9 @@ next4: inc si
        loop next3
        mov [si],dh
        inc si
-       mov [si],bh ;´æÈëÕıÊıµÄ¸öÊı
+       mov [si],bh ;å­˜å…¥æ­£æ•°çš„ä¸ªæ•°
        inc si 
-       mov [si],bl;´æÈë¸ºÊıµÄ¸öÊı
+       mov [si],bl;å­˜å…¥è´Ÿæ•°çš„ä¸ªæ•°
        mov ah,4ch
        int 21h
 code   ends
@@ -107,8 +107,8 @@ code   ends
 4.18
 data   segment 
 block  dw 2122h,4114h,4646h,7767h,3496h,7848h,7fffh,123Eh,3562H,54A2h
-count  equ  ($-block)/2 ;countÎªË«×Ö½ÚÊıµÄ¸öÊı
-pingjun dw 2 dup(00h) ;´æ·ÅÆ½¾ùÊıºÍÓàÊı
+count  equ  ($-block)/2 ;countä¸ºåŒå­—èŠ‚æ•°çš„ä¸ªæ•°
+pingjun dw 2 dup(00h) ;å­˜æ”¾å¹³å‡æ•°å’Œä½™æ•°
 data  ends
 code  segment 
       assume cs:code,ds:data
@@ -116,7 +116,7 @@ start:mov ax,data
       mov ds,ax
       mov si,offset block
       mov di,offset pingjun 
-      mov cx,count-1    ;Ïà¼Ó´ÎÊıÎª9´Î
+      mov cx,count-1    ;ç›¸åŠ æ¬¡æ•°ä¸º9æ¬¡
       xor dx,dx         
       mov ax,[si]
 next: inc si
@@ -134,7 +134,7 @@ next1:loop next
 code  ends
 end start
 
-¸½¼ÓÌâ
+é™„åŠ é¢˜
 data   segment  
 buf dw 7482h
 data  ends
@@ -144,9 +144,9 @@ start: mov ax,data
        mov ds,ax
        mov si,offset buf   
        mov ax,7482h
-       mov dx,80h ;Ö¸¶¨¶Ë¿ÚµØÖ·
-       out dx,ax;°Ñax=7482hËÍÈë¶Ë¿ÚµØÖ·80hÖĞ
-       in ax,dx;°Ñ¶Ë¿Ú
+       mov dx,80h ;æŒ‡å®šç«¯å£åœ°å€
+       out dx,ax;æŠŠax=7482hé€å…¥ç«¯å£åœ°å€80hä¸­
+       in ax,dx;æŠŠç«¯å£
 
 
 
