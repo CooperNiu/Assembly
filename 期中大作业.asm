@@ -210,36 +210,36 @@ STACK  SEGMENT  stack 'stack'
 STACK  ENDS   
 
 code segment
- assume  cs:code,ds:data,SS:STACK
+ assume  cs:code,ds:data,ss:stack
 start:
 ;----------------------------------------
 ;初始化
 ;----------------------------------------
         mov ax,data
         mov ds,ax
+        mov al,3h                   ;al=3h 80*25彩色	
         mov ah,0 
-        mov al,3h
         int 10h                     ;置显示模式                             
-        call far ptr clearall       ;调用清全屏
-        CLI                         ;清中断标志
-        CLD                         ;清方向标志
-        MOV       AX,0000H          ;设置中断向量
-        MOV       DS,AX
-        MOV       SI,0020H          
-        LODSW
-        MOV       BX,AX
-        LODSW
-        PUSH      AX                
-        PUSH      BX                
-        MOV       AX,DATA           
-        MOV       DS,AX
-        MOV       AX,0000H          
-        MOV       ES,AX             
-        MOV       DI,0020H         
-        MOV       AX,OFFSET TIMER   
-        STOSW
-        MOV       AX,SEG TIMER      
-        STOSW
+        call far ptr clearall       ;调用清全屏子过程
+        cli                         ;清中断标志
+        cld                         ;清方向标志,df=0,增量
+        mov       ax,0000H          ;设置中断向量
+        mov       ds,ax
+        mov       SI,0020H          
+        lodsw
+        mov       bx,ax
+        lodsw
+        push      ax
+        push      bx                
+        mov       ax,data           
+        mov       ds,ax
+        mov       ax,0000H          
+        mov       es,ax             
+        mov       di,0020H         
+        mov       ax,offset TIMER   
+        stosw
+        mov       ax,seg TIMER      
+        stosw
         ;初始化8253               
         MOV       AL,00110110B      ;0计数器，工作方式3，先写最底有效字节，再写最高有效字节
         OUT       43H,AL
@@ -329,7 +329,7 @@ FOREVER:
 ;initialization-初始化时间
 ;show-显示时间
 ;clearall-清屏 
-;DISPCHR-打印字符
+;dispchar-打印字符
 ;drawhour-时
 ;drawminute-分钟 
 ;drawsecond-秒
@@ -434,7 +434,7 @@ show    proc far
         mov bx,offset year     ;读year首地址
         mov cx,22              ;循环
 DISP1:  mov al,[bx]            ;取bx对应的值
-        call far ptr DISPCHR   ;显示[bx]
+        call far ptr dispchar   ;显示[bx]
         inc bx                 ;指向下一存储单元 
         loop DISP1 
         
@@ -449,7 +449,7 @@ DISP1:  mov al,[bx]            ;取bx对应的值
         mov bx,offset m02      ;读m02首地址
         mov cx,8               ;循环
 DISP2:  mov al,[BX]            ;取bx对应的值
-        call far ptr DISPCHR   ;显示[bx]
+        call far ptr dispchar   ;显示[bx]
         inc bx                 ;指向下一存储单元 
         loop DISP2          
         pop       dx
@@ -485,7 +485,7 @@ clearall proc far
 clearall endp  
 
 ;------------------------------
-dispchr proc far
+dispchar proc far
        push      bx
        push      cx 
        mov cx,1    ;字符重复次数
@@ -497,7 +497,7 @@ dispchr proc far
        pop       cx
        pop       bx
        ret
-dispchr endp      
+dispchar endp      
 ;-------------------------------------------------
 drawhour proc far
         mov flagh,0 
