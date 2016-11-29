@@ -470,6 +470,7 @@ clearall proc far
 			 ;bit3 :字体亮度 (0:字体正常，1:字体高亮度)
 			 ;bit4~6 :背景颜色 (0:黑，1:蓝，2:绿，3:青，4:红，5:紫，6:棕，7:白)
 			 ;bit7 :字体闪烁 (0:不闪烁，1:字体闪烁)  
+			 ;白底红字
        mov ch,0    ;窗口左上角的行位置
        mov cl,0    ;窗口左上角的列位置
        mov dh,24   ;窗口右下角的行位置
@@ -484,19 +485,19 @@ clearall proc far
 clearall endp  
 
 ;------------------------------
-DISPCHR  PROC      far
-         push      bx
-         push      cx 
-         mov cx,1
-         mov bx,000fh     
-         mov ah,9    
-         int 10h  
-         mov ah,0eh
-         int 10h
-         pop       cx
-         pop       bx
-         ret
-DISPCHR  ENDP      
+dispchr proc far
+       push      bx
+       push      cx 
+       mov cx,1    ;字符重复次数
+       mov bx,000fh;bh=显示页,bl=属性,al=字符   
+       mov ah,9    ;在光标位置显示字符及其属性
+       int 10h  
+       mov ah,0eh  ;显示字符(光标前移),al = 字符,bl = 前景色
+       int 10h
+       pop       cx
+       pop       bx
+       ret
+dispchr endp      
 ;-------------------------------------------------
 drawhour proc far
         mov flagh,0 
