@@ -464,18 +464,18 @@ clearall proc far
        push      ax
        push      bx
        push      cx 
-       push      dx
-       mov ah,6    
-       mov al,0    
+       push      dx   
+       mov al,0    ;整个窗口为空白
        mov bh,01110100b  ;bit0~2 :字体颜色 (0:黑，1:蓝，2:绿，3:青，4:红，5:紫，6:棕，7:白)
 			 ;bit3 :字体亮度 (0:字体正常，1:字体高亮度)
 			 ;bit4~6 :背景颜色 (0:黑，1:蓝，2:绿，3:青，4:红，5:紫，6:棕，7:白)
 			 ;bit7 :字体闪烁 (0:不闪烁，1:字体闪烁)  
-       mov ch,0    
-       mov cl,0    
-       mov dh,24   
-       mov dl,79  
-       int 10h     
+       mov ch,0    ;窗口左上角的行位置
+       mov cl,0    ;窗口左上角的列位置
+       mov dh,24   ;窗口右下角的行位置
+       mov dl,79   ;窗口右下角的列位置
+       mov ah,6    ;当前页上滚
+       int 10h     ;显示器驱动程序
        pop       dx
        pop       cx
        pop       bx
