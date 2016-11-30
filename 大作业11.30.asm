@@ -294,7 +294,10 @@ forever:
         cmp       al,'p'             ;p被按下
         jz        pause 
         jmp forever   
-     
+                                          ;在表上显示小时
+  drawpoint:
+        call far ptr drawhour
+        jmp forever 
   jdrawmin:                          ;分钟数码管显示
         call far ptr drawminute
         jmp forever                   
@@ -316,10 +319,7 @@ forever:
   pause:                             ;计时暂停
         mov flag,0
         jmp forever 
-                                     ;在表上显示小时
-  drawpoint:
-        call far ptr drawhour
-        jmp forever 
+
    
   exit:                              ;退出
         mov ah,4ch
