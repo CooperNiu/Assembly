@@ -161,9 +161,9 @@ data segment
         db 45,45,45,124,0,124,45,45,45,0,0,124,45,45,45,'$'
     points  dw 414h,617h,919h,0c17h,0e14h,0f10h,0e0ch,0c09h,906h,608h,40bh,0310h
     year    db 4 dup('0') 
-    a1      db '-'               
+    a1      db '/'               
     month   db 2 dup('0')   
-    a2      db '-'               
+    a2      db '/'               
     day     db 2 dup('0')  
     a3      db 2 dup(0)           ;  年月日  
     h2      db '0'
