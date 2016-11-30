@@ -46,16 +46,16 @@ printchar macro
 endm 
 ;---------------------------------
 ;功能：设置光标位置
-;入口参数：hang-行   lie-列
+;入口参数：row-行   column-列
 ;出口参数：无
 ;---------------------------------
-set_cusor_location macro hang,lie
+set_cusor_location macro row,column
     push    ax
     push    bx
     push    cx
     push    dx
-    mov dh,hang
-    mov dl,lie
+    mov dh,row
+    mov dl,column
     mov bx,0
     mov ah,2   ;设置光标位置调用号
     int 10h   
