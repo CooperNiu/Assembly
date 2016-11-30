@@ -273,27 +273,27 @@ start:
 ;-------------------------------------------        
 FOREVER:
         call far ptr show            ;显示秒表 
-        CMP       flagh,1
-        JE        DRAWPOINT
-        CMP       flagm,1
-        JE        JDRAWMIN 
-        CMP       flags,1
-        JE        DRAWSEC            ;分别判断时，分，秒标志位
-        MOV       AH,0BH             ;检测是否有键按下
+        cmp       flagh,1
+        jz        DRAWPOINT
+        cmp       flagm,1
+        jz        JDRAWMIN 
+        cmp       flags,1
+        jz        DRAWSEC            ;分别判断时，分，秒标志位
+        mov       ah,0BH             ;检测是否有键按下,检查输入设备，课本139页
         INT       21H
-        CMP       AL,00H              
-        JZ        FOREVER            ;无键按下,转FOREVER 
-        MOV       AH,08H             ;有键,读键值AL
-        INT       21H
-        CMP       AL,'s'             ;S被按下
-        JE        FLAG1 
-        CMP       AL,'r'             ;R被按下
-        JE        RESET 
-        CMP       AL,'q'             ;Q被按下
-        JE        EXIT  
-        CMP       AL,'p'             ;P被按下
-        JE        PAUSE 
-        JMP FOREVER   
+        cmp       al,00H               
+        jz        FOREVER            ;al=00h,代表无键按下,转入FOREVER 
+        mov       ah,08H             ;有键输入,读取键值但不回显.出口参数为al=键盘输入的字符
+        int       21H
+        cmp       al,'s'             ;S被按下
+        jz        FLAG1 
+        cmp       al,'r'             ;R被按下
+        jz        RESET 
+        cmp       al,'q'             ;Q被按下
+        jz        EXIT  
+        cmp       al,'p'             ;P被按下
+        jz        PAUSE 
+        cmp FOREVER   
      
   JDRAWMIN:                          ;分钟数码管显示
         call far ptr drawminute
