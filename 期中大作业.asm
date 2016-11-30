@@ -205,9 +205,9 @@ data segment
      yanyu     db 'Every minute counts!','$'
 data ends 
 
-STACK  SEGMENT  stack 'stack'
-       DW 128 DUP(0)
-STACK  ENDS   
+stack  segment  stack 'stack'
+       db 256 DUP(0)
+stack  ends   
 
 code segment
  assume  cs:code,ds:data,ss:stack
@@ -217,7 +217,7 @@ start:
 ;----------------------------------------
         mov ax,data
         mov ds,ax
-        mov al,3h                   ;al=3h 80*25彩色	
+        mov al,3h                   ;al=3h，屏幕 80*25彩色	
         mov ah,0 
         int 10h                     ;置显示模式                             
         call far ptr clearall       ;调用清全屏子过程
