@@ -220,7 +220,7 @@ start:
         mov al,3h                   ;al=3h，屏幕 80*25彩色	
         mov ah,0 
         int 10h                     ;置显示模式                             
-        call far ptr clearall       ;调用清全屏子过程
+        call far ptr clearscreen    ;调用清全屏子过程
         cli                         ;清中断标志
         cld                         ;清方向标志,df=0,增量
         mov       ax,0000H          ;设置中断向量
@@ -328,7 +328,7 @@ FOREVER:
 ;过程定义
 ;initialization-初始化时间
 ;show-显示时间
-;clearall-清屏 
+;clearscreen-清屏 
 ;dispchar-打印字符
 ;drawhour-时
 ;drawminute-分钟 
@@ -460,7 +460,7 @@ DISP2:  mov al,[BX]            ;取bx对应的值
 show    endp
 
 ;------------------------
-clearall proc far
+clearscreen proc far
        push      ax
        push      bx
        push      cx 
@@ -482,7 +482,7 @@ clearall proc far
        pop       bx
        pop       ax
        ret
-clearall endp  
+clearscreen endp  
 
 ;------------------------------
 dispchar proc far  ;要显示的字符输入给al ，然后在当前光标位置写属性或字符
