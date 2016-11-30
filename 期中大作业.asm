@@ -485,14 +485,14 @@ clearall proc far
 clearall endp  
 
 ;------------------------------
-dispchar proc far
+dispchar proc far  ;要显示的字符输入给al ，然后在当前光标位置写属性或字符
        push      bx
        push      cx 
        mov cx,1    ;字符重复次数
        mov bx,000fh;bh=显示页,bl=属性,al=字符   
        mov ah,9    ;在光标位置显示字符及其属性
        int 10h  
-       mov ah,0eh  ;显示字符(光标前移),al = 字符,bl = 前景色
+       mov ah,0eh  ;显示字符(光标前移),bl = 前景色
        int 10h
        pop       cx
        pop       bx
