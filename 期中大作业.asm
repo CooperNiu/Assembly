@@ -293,7 +293,7 @@ FOREVER:
         jz        EXIT  
         cmp       al,'p'             ;P被按下
         jz        PAUSE 
-        cmp FOREVER   
+        jmp FOREVER   
      
   JDRAWMIN:                          ;分钟数码管显示
         call far ptr drawminute
