@@ -198,8 +198,8 @@ data segment
             db '            7       5            ',0dh,0ah  
             db '                6                ',0dh,0ah ,'$' 
      copyright db 'copyright heqing','$'
-     time      db 'time is: ','$'
-     counter   db 'counter','$'   
+     time      db 'now time is:','$'
+     timepiece   db 'timepiece','$'   
      wminute   db 'minute','$'
      wsecond   db 'second','$' 
      yanyu     db 'every minute counts!','$'
@@ -439,7 +439,7 @@ disp1:  mov al,[bx]            ;取bx对应的值
         loop disp1 
         
         set_cusor_location 0ah,36
-        mov dx,offset counter 
+        mov dx,offset timepiece 
         printchar
         mov dx,0a30h
         mov ah,2 
