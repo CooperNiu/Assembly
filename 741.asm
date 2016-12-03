@@ -30,6 +30,10 @@ sen7    db 'Time table$'
         .code
         
 num2asc proc           ;asc码转换
+    	push    ax
+   	push    bx
+    	push    cx
+    	push    dx
         cmp ax,10 ;
         jl next1
         mov di,10
@@ -48,26 +52,42 @@ next1:  add al,30h
         dec bx
         mov [bx],al
 exit:   ret
+        pop     dx
+ 	pop     cx
+   	pop     bx
+        pop     ax
 num2asc endp
 
 disply  proc
+    	push    ax
+   	push    bx       
         mov bh,0
         mov ah,14
         int 10h
+    	pop    ax
+   	pop    bx
         ret
 disply  endp 
 
-transf  macro x,y           ;转换为asc码宏
+transf  macro x,y           ;转换为asc码的宏
+    	push    ax
+   	push    bx
         mov bx,offset x
         xor ax,ax
         mov al,byte ptr y
         call num2asc 
+        pop    ax
+   	pop    bx
 endm 
 
 disp    macro x             ;显示字符串的宏
+        push ax
+        push dx
         mov dx,offset x
         mov ah,09h
         int 21h
+        pop ax
+        pop dx
 endm 
  
 point   macro x,y          ;光标位置处于x行，y列的宏 
@@ -79,6 +99,10 @@ point   macro x,y          ;光标位置处于x行，y列的宏
 endm  
 
 clear   macro x,y,z,w,t,s  ;清屏的宏
+        push    ax
+   	push    bx
+    	push    cx
+    	push    dx
         mov al,t           
         mov ch,x           
         mov cl,y           
@@ -86,7 +110,11 @@ clear   macro x,y,z,w,t,s  ;清屏的宏
         mov dl,w           
         mov bh,s           
         mov ah,6h          
-        int 10h            
+        int 10h 
+        pop     dx
+ 	pop     cx
+   	pop     bx
+        pop     ax           
 endm
 
 start:  clear 0,0,24,79,0,03h     ;主程序
@@ -177,9 +205,9 @@ timing1:mov ah,08h               ;读取键盘输入的ASCII值到al里面
         cmp al,'D'               
         je ending
         cmp al,'a'               ;输入的是a或A，则进入开始计时程序
-        je jshi
+        je jishi
         cmp al,'A'              
-        je jshi
+        je jishi
         jmp date                 ;如果输入不满足要求程序继续循环
         
 timing2:                         ;开始计时时显示 
@@ -216,9 +244,9 @@ g:      mov ah,8              ;取键盘输入,并判断程序运行时键入的
         cmp al,'D'
         je ending
         cmp al,'b'
-        je jshi
+        je jishi
         cmp al,'B'
-        je jshi
+        je jishi
         cmp al,'c'
         je cancel
         cmp al,'C'
@@ -277,7 +305,7 @@ cancel: mov si,offset buff1    ;
         disp sen4
         jmp start
         
-jshi:   
+jishi:   
         mov ah,2ch                         ;记录计时一刻的时间
         int 21h
         mov byte ptr hms+1,ch   
