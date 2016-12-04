@@ -3,7 +3,6 @@
 ;print-把时间转换成字符用于输出    *
 ;printchar-打印字符串              *
 ;set_cusor_location-设置光标       *
-;hour-定位表上的小时               *
 ;***********************************
 ;---------------------------------
 ;功能：把ax中的数转换成十进制数按
@@ -62,34 +61,6 @@ set_cusor_location macro row,column
     pop     bx
     pop     ax
 endm  
-;---------------------------------
-;功能：在表上标出现在的小时
-;入口参数：former-小时数减1  
-;          later-当前小时
-;出口参数：无
-;---------------------------------
-hour macro former,later
-    push    ax
-    push    bx
-    push    cx
-    push    dx
-    mov ah,6
-    mov al,1
-    mov bh,01110100b
-    mov cx,[former]
-    mov dx,[former]
-    int 10h           ;上一时刻恢复
-    mov ah,6
-    mov al,1
-    mov bh,11001111b
-    mov cx,[later]
-    mov dx,[later]
-    int 10h           ;这一时刻标出
-    pop     dx
-    pop     cx
-    pop     bx
-    pop     ax
-endm 
 ;***********************************
 ;段定义
 ;data-数据段
@@ -132,24 +103,11 @@ data segment
     ms02    db '0'
     ms01    db '0' 
     readme  db 'press s:start,r:reset,p:pause,q:quit',0dh,0ah,'$' 
-    clock   db '               12                ',0dh,0ah
-            db '          11        1            ',0dh,0ah 
-            db '                                 ',0dh,0ah
-            db '       10              2         ',0dh,0ah 
-            db '                                 ',0dh,0ah
-            db '                                 ',0dh,0ah    
-            db '      9       hour       3       ',0dh,0ah  
-            db '                                 ',0dh,0ah
-            db '                                 ',0dh,0ah 
-            db '         8             4         ',0dh,0ah  
-            db '                                 ',0dh,0ah
-            db '            7       5            ',0dh,0ah  
-            db '                6                ',0dh,0ah ,'$' 
-     copyright db 'name:mojiajun','$'
-     time      db 'now time is:','$'
-     timepiece   db 'timepiece','$'   
-     Student              db 'Student Number:2014211708','$'
-     Class                db 'Class:2014211401','$' 
+    copyright db 'name:mojiajun','$'
+    time      db 'now time is:','$'
+    timepiece db 'timepiece','$'   
+    Student   db 'Student Number:2014211708','$'
+    Class     db 'Class:2014211401','$' 
 data ends 
 
 stack  segment  stack 'stack'
@@ -187,7 +145,7 @@ start:
         stosw
         mov       ax,seg timer      
         stosw
-        ;初始化8253               
+ ;初始化8253               
         mov       al,00110110b      ;0计数器，工作方式3，先写最底有效字节，再写最高有效字节
         out       43h,al
         mov       ax,10923          ;设初值
@@ -319,12 +277,7 @@ movh: mov counthour,ch
       mov di,dx
       add dx,22
       mov si,dx
-phour:hour si,di
-      set_cusor_location 3,0 
-      mov dx,offset clock
-      printchar 
-        
-      mov al,m2           ;初始化countmint
+phour:mov al,m2           ;初始化countmint
       mov countmint,al    ;初始画出分钟
       sub countmint,30h
       mov al,m1
@@ -421,8 +374,7 @@ dispchar proc far  ;要显示的字符输入给al ，然后在当前光标位置
        pop       bx
        ret
 dispchar endp      
-;------------------------------
-          
+;------------------------------         
 timer  proc  far
          push      ax          
          cmp       flag,0
