@@ -205,10 +205,11 @@ timing1:mov ah,08h               ;读取键盘输入的ASCII值到al里面
         cmp al,'D'               
         je tr1
         cmp al,'a'               ;输入的是a或A，则进入开始计时程序
-        je jishi
+        je tr4
         cmp al,'A'              
-        je jishi
+        je tr4
         jmp date                 ;如果输入不满足要求程序继续循环
+tr4 :jmp far ptr jishi
 tr1 :jmp far ptr ending        
 timing2:                         ;开始计时时显示 
         point 7,30
@@ -244,14 +245,14 @@ g:      mov ah,8              ;取键盘输入,并判断程序运行时键入的
         cmp al,'D'
         je tr2
         cmp al,'b'
-        je jishi
+        je tr5	
         cmp al,'B'
-        je jishi
+        je tr5
         cmp al,'c'
         je tr3
         cmp al,'C'
         je tr3
-
+tr5:   jmp far ptr jishi
 tr3:   jmp far ptr cancel  
 tr2:   jmp far ptr ending  
        
@@ -309,7 +310,7 @@ cancel label far
         disp sen4
         jmp start
         
-jishi:   
+jishi label far  
         mov ah,2ch                         ;记录计时一刻的时间
         int 21h
         mov byte ptr hms+1,ch   
