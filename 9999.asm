@@ -3,6 +3,7 @@
 ;print-把时间转换成字符用于输出    *
 ;printchar-打印字符串              *
 ;set_cusor_location-设置光标       *
+;hour-定位表上的小时               *
 ;***********************************
 ;---------------------------------
 ;功能：把ax中的数转换成十进制数按
@@ -61,6 +62,34 @@ set_cusor_location macro row,column
     pop     bx
     pop     ax
 endm  
+;---------------------------------
+;功能：在表上标出现在的小时
+;入口参数：former-小时数减1  
+;          later-当前小时
+;出口参数：无
+;---------------------------------
+hour macro former,later
+    push    ax
+    push    bx
+    push    cx
+    push    dx
+    mov ah,6
+    mov al,1
+    mov bh,01110100b
+    mov cx,[former]
+    mov dx,[former]
+    int 10h           ;上一时刻恢复
+    mov ah,6
+    mov al,1
+    mov bh,11001111b
+    mov cx,[later]
+    mov dx,[later]
+    int 10h           ;这一时刻标出
+    pop     dx
+    pop     cx
+    pop     bx
+    pop     ax
+endm 
 ;***********************************
 ;段定义
 ;data-数据段
@@ -71,20 +100,13 @@ endm
 data segment   
     count100  db 100  
     flag      db 0 
+    flagh     db 0
+    flagm     db 0
+    flags     db 0 
     countsec  db 0 
     countmint db 0
     countmin  db 0
     counthour db 0 
-    num db 45,45,45,3 dup(124,0,124),45,45,45
-        db 5 dup(0,124,0)
-        db 45,45,45,0,0,124,45,45,45,124,0,0,45,45,45
-        db 2 dup(45,45,45,0,0,124),45,45,45
-        db 2 dup(124,0,124),45,45,45,2 dup(0,0,124)
-        db 45,45,45,124,0,0,45,45,45,0,0,124,45,45,45
-        db 45,45,45,124,0,0,45,45,45,124,0,124,45,45,45
-        db 45,45,45,4 dup(0,0,124)
-        db 45,45,45,124,0,124,45,45,45,124,0,124,45,45,45
-        db 45,45,45,124,0,124,45,45,45,0,0,124,45,45,45,'$'
     points  dw 414h,617h,919h,0c17h,0e14h,0f10h,0e0ch,0c09h,906h,608h,40bh,0310h
     year    db 4 dup('0') 
     a1      db '/'               
@@ -110,11 +132,24 @@ data segment
     ms02    db '0'
     ms01    db '0' 
     readme  db 'press s:start,r:reset,p:pause,q:quit',0dh,0ah,'$' 
-    copyright db 'name:mojiajun','$'
-    time      db 'now time is:','$'
-    timepiece   db 'timepiece','$'   
-    Student              db 'Student Number:2014211708','$'
-    Class                db 'Class:2014211401','$' 
+    clock   db '               12                ',0dh,0ah
+            db '          11        1            ',0dh,0ah 
+            db '                                 ',0dh,0ah
+            db '       10              2         ',0dh,0ah 
+            db '                                 ',0dh,0ah
+            db '                                 ',0dh,0ah    
+            db '      9       hour       3       ',0dh,0ah  
+            db '                                 ',0dh,0ah
+            db '                                 ',0dh,0ah 
+            db '         8             4         ',0dh,0ah  
+            db '                                 ',0dh,0ah
+            db '            7       5            ',0dh,0ah  
+            db '                6                ',0dh,0ah ,'$' 
+     copyright db 'name:mojiajun','$'
+     time      db 'now time is:','$'
+     timepiece   db 'timepiece','$'   
+     Student              db 'Student Number:2014211708','$'
+     Class                db 'Class:2014211401','$' 
 data ends 
 
 stack  segment  stack 'stack'
@@ -284,7 +319,11 @@ movh: mov counthour,ch
       mov di,dx
       add dx,22
       mov si,dx
-phour:hour si,di  
+phour:hour si,di
+      set_cusor_location 3,0 
+      mov dx,offset clock
+      printchar 
+        
       mov al,m2           ;初始化countmint
       mov countmint,al    ;初始画出分钟
       sub countmint,30h
@@ -416,6 +455,7 @@ jishi:   inc       ms01
 date:    dec       count100
          jnz       timext
          mov       count100,100  
+         mov       flags,1
          inc       s1
          cmp       s1,'9'         
          jle       timext
@@ -425,6 +465,7 @@ date:    dec       count100
          jl        timext
          mov       s2,'0'             ;大于'9'，ms2位清零 
          inc       m1 
+         mov       flagm,1
          cmp       m1,'9'
          jle       timext
          mov       m1,'0'              ;大于'9'，s1位清零
@@ -433,6 +474,7 @@ date:    dec       count100
          jl        timext
          mov       m2,'0'              ;大于'5'，s2位清零
          inc       h1 
+         mov       flagh,1
          cmp       h1,'9'
          jle       timext
          mov       h1,'0'              ;大于'9'，m1位清零
