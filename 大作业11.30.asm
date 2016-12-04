@@ -160,7 +160,6 @@ data segment
      timepiece   db 'timepiece','$'   
      Student              db 'Student Number:2014211708','$'
      Class                db 'Class:2014211401','$' 
-     yanyu     db 'every minute counts!','$'
 data ends 
 
 stack  segment  stack 'stack'
