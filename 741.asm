@@ -201,15 +201,15 @@ change: mov ah,2ch
 timing1:mov ah,08h               ;读取键盘输入的ASCII值到al里面
         int 21h
         cmp al,'d'               ;输入的是d或者D，则进入退出程序
-        je ending                
+        je tr1                
         cmp al,'D'               
-        je ending
+        je tr1
         cmp al,'a'               ;输入的是a或A，则进入开始计时程序
         je jishi
         cmp al,'A'              
         je jishi
         jmp date                 ;如果输入不满足要求程序继续循环
-        
+tr1 :jmp far ptr ending        
 timing2:                         ;开始计时时显示 
         point 7,30
         disp sen2                
@@ -240,18 +240,21 @@ g3:     mov ah,1
 g:      mov ah,8              ;取键盘输入,并判断程序运行时键入的是b，c，还是d 
         int 21h
         cmp al,'d'
-        je ending
+        je tr2
         cmp al,'D'
-        je ending
+        je tr2
         cmp al,'b'
         je jishi
         cmp al,'B'
         je jishi
         cmp al,'c'
-        je cancel
+        je tr3
         cmp al,'C'
-        je cancel
-        
+        je tr3
+
+tr3:   jmp far ptr cancel  
+tr2:   jmp far ptr ending  
+       
 g1:     mov ah,2ch
         int 21h
         mov byte ptr hms,ch     ;把小时存入预设的hms中
@@ -295,8 +298,9 @@ edc:    mov ah,2ch
         mov ah,01                  
         int 21h
         jmp ending
-        
-cancel: mov si,offset buff1    ;
+
+cancel label far        
+        mov si,offset buff1    ;
         mov byte ptr [si],00h
         clear 9,35,9,45,1,05h
         point 6,30
@@ -313,8 +317,9 @@ jishi:
         mov byte ptr hms+7,dh  
         mov byte ptr buff1,01h     
         jmp date 
-        
-ending: mov ah,4ch               ;终止程序
+
+ending label far  
+        mov ah,4ch               ;终止程序
         int 21h
 
         end start           
