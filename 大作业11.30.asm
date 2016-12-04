@@ -4,9 +4,7 @@
 ;printchar-打印字符串              *
 ;set_cusor_location-设置光标       *
 ;hour-定位表上的小时               *
-;drawmin-画显示分钟的数码管        *
 ;***********************************
-
 ;---------------------------------
 ;功能：把ax中的数转换成十进制数按
 ;      字节存放在di指向的数据段中
@@ -92,46 +90,6 @@ hour macro former,later
     pop     bx
     pop     ax
 endm 
-;---------------------------------
-;功能：显示分钟（数码管形式）
-;入口参数：row-行  
-;          col-列 
-;          cou-要显示的时间
-;出口参数：无
-;---------------------------------
-drawmin macro row,col,cou 
-     local  cir,cir1
-     push    ax
-     push    bx
-     push    cx
-     push    dx
-     mov bh,row
-     mov bl,col 
-     xor ax,ax
-     mov dx,offset num  
-     mov al,15   
-     mov cl,cou
-     mul cl 
-     add dl,al
-     mov di,dx
-     mov cx,5
-cir: set_cusor_location bh,bl
-     push cx  
-     mov cx,3
-cir1:mov dl,[di]
-     inc di 
-     mov ah,2
-     int 21h
-     loop cir1
-     pop cx
-     inc bh
-     loop cir 
-     pop     dx
-     pop     cx
-     pop     bx
-     pop     ax
-endm  
-
 ;***********************************
 ;段定义
 ;data-数据段
@@ -197,11 +155,11 @@ data segment
             db '                                 ',0dh,0ah
             db '            7       5            ',0dh,0ah  
             db '                6                ',0dh,0ah ,'$' 
-     copyright db 'copyright heqing','$'
+     copyright db 'name:mojiajun','$'
      time      db 'now time is:','$'
      timepiece   db 'timepiece','$'   
-     wminute   db 'minute','$'
-     wsecond   db 'second','$' 
+     Student              db 'Student Number:2014211708','$'
+     Class                db 'Class:2014211401','$' 
      yanyu     db 'every minute counts!','$'
 data ends 
 
@@ -255,16 +213,13 @@ start:
         set_cusor_location 0dh,36                ;初始打印
         mov dx,offset readme 
         printchar
-        set_cusor_location 21,22
-        mov dx,offset wminute 
+        set_cusor_location 22,22
+        mov dx,offset Student 
         printchar
-        set_cusor_location 23,0bh
-        mov dx,offset wsecond 
+        set_cusor_location 23,22
+        mov dx,offset Class 
         printchar 
-        set_cusor_location 10h,44
-        mov dx,offset yanyu 
-        printchar
-        set_cusor_location 22,60
+        set_cusor_location 21,22
         mov dx,offset copyright
         printchar                   
         call far ptr initialization  ;时间初始化   
@@ -273,12 +228,6 @@ start:
 ;-------------------------------------------        
 forever:
         call far ptr show            ;显示秒表 
-        cmp       flagh,1
-        jz        drawpoint
-        cmp       flagm,1
-        jz        jdrawmin 
-        cmp       flags,1
-        jz        drawsec            ;分别判断时，分，秒标志位
         mov       ah,0bh             ;检测是否有键按下,检查输入设备，课本139页
         int       21h
         cmp       al,00h               
@@ -294,16 +243,7 @@ forever:
         cmp       al,'p'             ;p被按下
         jz        pause 
         jmp forever   
-                                          ;在表上显示小时
-  drawpoint:
-        call far ptr drawhour
-        jmp forever 
-  jdrawmin:                          ;分钟数码管显示
-        call far ptr drawminute
-        jmp forever                   
-  drawsec:                           ;秒，箭头显示
-        call far ptr drawsecond
-        jmp forever 
+
   flag1:                             ;开始计时
         mov flag,1
         jmp forever    
@@ -330,9 +270,6 @@ forever:
 ;show-显示时间
 ;clearscreen-清屏 
 ;dispchar-打印字符
-;drawhour-时
-;drawminute-分钟 
-;drawsecond-秒
 ;timer-中断
 ;*********************************** 
        
@@ -404,9 +341,6 @@ phour:hour si,di
       mov al,m1
       mov countmin,al  
       sub countmin,30h
-      drawmin 17,12,countmint
-      drawmin 17,16,countmin   
-        
       mov al,s1           ;初始化countsec
       sub al,30h
       mov countsec,al  
@@ -498,99 +432,6 @@ dispchar proc far  ;要显示的字符输入给al ，然后在当前光标位置
        pop       bx
        ret
 dispchar endp      
-;-------------------------------------------------
-drawhour proc far
-        mov flagh,0 
-        push ax
-        push bx 
-        push cx 
-        push dx 
-        mov ah,2ch                      ;取时间 cx:dx
-        int 21h 
-        mov ah,0 
-        mov  al, ch 
-        cmp ch,12
-        push cx
-        jna movh1
-        sub ch,12 
- movh1: mov counthour,ch 
-        pop cx  
-        mov al,counthour
-        mov ah,0
-        dec al
-        jz zero1
-        shl al,1
-        mov dx,offset points
-        add dx,ax 
-        mov cx,dx
-        sub cx,2
-        mov si,cx
-        mov di,dx 
-        jmp phour1
-  zero1:mov dx,offset points  
-        mov di,dx
-        add dx,22
-        mov si,dx
- phour1:hour si,di
-        set_cusor_location 3,0 
-        mov dx,offset clock
-        printchar
-        pop dx
-        pop cx
-        pop bx
-        pop ax
-        ret
-drawhour endp  
-;-------------------------------------------------
-drawminute proc far 
-        push      ax
-        push      bx
-        push      cx 
-        push      dx
-        mov flagm,0 
-        mov al,m2
-        mov countmint,al 
-        sub countmint,30h
-        mov al,m1
-        mov countmin,al  
-        sub countmin,30h
-        drawmin 17,12,countmint
-        drawmin 17,16,countmin 
-        pop       dx
-        pop       cx
-        pop       bx
-        pop       ax
-    ret
-drawminute endp
-;-------------------------------------------------
-drawsecond proc far
-        push      ax
-        push      bx
-        push      cx 
-        push      dx
-        mov flags,0 
-        set_cusor_location 22,0ah
-        mov ah,6
-        mov al,1
-        mov cx,1600h
-        mov dx,1620h
-        mov bh,01110100b
-        int 10h
-        mov al,s1
-        sub al,30h 
-        mov ah,0 
-        inc al
-        mov cx,ax
-  csec: mov dl,26
-        mov ah,2
-        int 21h
-        loop csec 
-        pop       dx
-        pop       cx
-        pop       bx
-        pop       ax
-        ret
-drawsecond endp
 ;------------------------------
           
 timer  proc  far
