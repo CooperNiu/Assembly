@@ -36,7 +36,7 @@ forever:
 delay proc near    ;定义delay子过程
        mov bx,200
 qwe1:  mov cx,0
-qwe2:  loop qwe2  ;LOOP指令相当于以下两条指令： DEC CX,JNZ disp
+qwe2:  loop qwe2  ;LOOP指令相当于以下两条指令： DEC CX,JNZ disp 此处CX从 0000h 减一后变成 FFFFh，然后继续循环
        dec bx
        jne qwe1   ;bx不等于0，继续循环
        ret
