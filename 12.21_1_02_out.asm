@@ -21,7 +21,7 @@ start: mov ax,data
        int 21h       ;此功能调用显示字符直到遇到终止字符串的$字符
       
 L1:    mov ah,2      ;调用号ah=02h，显示输出，DL=要显示的ASCII字符代码
-       mov dl,0dh
+       mov dl,0dh    ;显示回车符 0dh=00001101B ，查表 为CR，即为回车
        int 21h
        mov ah,1      ;调用号ah=01h,读键盘字符并回显，出口参数AL=读到的键盘字符
        int 21h
