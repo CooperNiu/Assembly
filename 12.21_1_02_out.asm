@@ -13,6 +13,12 @@ stack ends
 code segment 'code' ;  'code' 类别，把类型名相同的code段放在连续的存储区内
     assume cs:code,ds:date,ss,stack
     
+       mov ax,data
+       mov ds,ax
+       mov es,ax
+       mov dx,offset str  ;取偏移地址
+       mov ah,9      ;课本137页，字符串显示，调用号为ah=09h  ds:dx,此寄存器对指向内存中的字符串的首址，
+       int 21h       ;此功能调用显示字符直到遇到终止字符串的$字符
 start: mov ah,2      ;调用号ah=02h，显示输出，DL=要显示的ASCII字符代码
        mov dl,0dh
        int 21h
