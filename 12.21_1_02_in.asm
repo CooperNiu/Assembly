@@ -11,7 +11,7 @@ stack segment stack
 stack ends       
 
 code segment 'code' ;  'code' 类别，把类型名相同的code段放在连续的存储区内
-    assume cs:code,ds:date,ss,stack
+    assume cs:code,ds:data,ss,stack
     
 start: mov dx,ls244   ;从2A0输入一个数据
        in al,dx       ;读入AL中
