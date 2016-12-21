@@ -8,11 +8,11 @@ data ends
 
 stack segment stack
     dw 32 dup(0)
-stack ends       
+stack ends      
+ 
+code segment 'code'
+ assume  cs:code,ds:data,ss:stack
 
-code segment 'code' ;  'code' 类别，把类型名相同的code段放在连续的存储区内
-    assume cs:code,ds:data,ss,stack
-    
 start: mov dx,ls244   ;从2A0输入一个数据
        in al,dx       ;读入AL中
        mov dl,al      ;再将数据保存到DL中
