@@ -13,37 +13,37 @@ stack ends
 
 code segment 'code'
  assume  cs:code,ds:data,ss:stack
-start: mov al,14h
+start: mov al,14h     ;14h=00010100B.设置8253通道0为工作方式2，只读/写计数器低字节。二进计数
        mov dx,io8253a
        out dx,al
-       mov dx,io8253b
+       mov dx,io8253b ;地址为280h
        mov al,0fh
        out dx,al      
-L1:    in al,dx
-       call disp
+L1:    in al,dx    ;读计数初值
+       call disp   ;调用显示的子程序
        push dx
        mov ah,06h
        int 21h
        pop dx
        jz L1
-       mov ah,4ch
+       mov ah,4ch    ;退出
        int 21h 
-disp proc near 
+disp proc near     ; 显示子程序定义
        push dx
-       and al,0fh
+       and al,0fh  ;首先取低四位
        mov dl,al
-       cmp dl,9
-       jle num
-       add dl,7
+       cmp dl,9    ;判断是否<=9
+       jle num     ;若是则为‘0-9’，ASCII码加30H
+       add dl,7    ;否则为‘A-F’，ASCII码加37H
 num:   add dl,30h
-       mov ah,02h
+       mov ah,02h  ;显示，调用号AH=02H
        int 21h
-       mov dl,0dh
+       mov dl,0dh  ;回车符
        int 21h
-       mov dl,0ah
+       mov dl,0ah  ;换行符
        int 21h
        pop dx
-       ret
+       ret         ;子程序返回
 disp endp
 code ends
 end start
