@@ -30,7 +30,7 @@ L1:    in al,dx
        int 21h 
 disp proc near 
        push dx
-       and al,ofh
+       and al,0fh
        mov dl,al
        cmp dl,9
        jle num
