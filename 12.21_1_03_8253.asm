@@ -4,7 +4,7 @@
 io8253a  equ 283h      ;EQU语句给符合定义一个值，或者其他符号名，此处赋值地址,ls273 只是一个名字，可以改变      
 io8253b  equ 280h
 data segment
-    str db "press esc to exit...,press other key to output in the screen$";提示按任何键导致退出
+
 data ends   
 
 stack segment stack
